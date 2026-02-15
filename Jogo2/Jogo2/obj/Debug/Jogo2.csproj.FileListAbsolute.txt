@@ -1,0 +1,7 @@
+C:\Users\Misae\source\repos\Jogo2\Jogo2\bin\Debug\Jogo2.exe.config
+C:\Users\Misae\source\repos\Jogo2\Jogo2\bin\Debug\Jogo2.exe
+C:\Users\Misae\source\repos\Jogo2\Jogo2\bin\Debug\Jogo2.pdb
+C:\Users\Misae\source\repos\Jogo2\Jogo2\obj\Debug\Jogo2.csproj.AssemblyReference.cache
+C:\Users\Misae\source\repos\Jogo2\Jogo2\obj\Debug\Jogo2.csproj.CoreCompileInputs.cache
+C:\Users\Misae\source\repos\Jogo2\Jogo2\obj\Debug\Jogo2.exe
+C:\Users\Misae\source\repos\Jogo2\Jogo2\obj\Debug\Jogo2.pdb
