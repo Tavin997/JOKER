@@ -1,4 +1,4 @@
-﻿using Jogo2;
+using Jogo2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,7 @@ namespace Jogo2
             public static int[,] valoresBot = new int[5, 2];
             public static int[] slotMesa = new int[3];
             public static int[,] valoresMesa = new int[5, 3];
+            public static Random num_mesa = new Random();
         }
 
         static void Main()
@@ -137,12 +138,11 @@ namespace Jogo2
             Console.WriteLine("╠════════════════════╣");
             Console.Write("║");
 
-            Random num_mesa = new Random();
             if (VG.pausou == false)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    VG.slotMesa[i] = num_mesa.Next(1, 10);
+                    VG.slotMesa[i] = VG.num_mesa.Next(1, 10);
                     VG.valoresMesa[VG.rodada, i] = VG.slotMesa[i];
 
                     Console.Write($" {VG.valoresMesa[VG.rodada, i]} ║");
@@ -162,8 +162,6 @@ namespace Jogo2
 
         public static void MaoPlayer()
         {
-            Random num_mesa = new Random();
-
             Console.WriteLine("╔════════════════════╗");
             Console.WriteLine("║      SUA MÃO       ║");
             Console.WriteLine("╠════════════════════╣");
@@ -173,8 +171,8 @@ namespace Jogo2
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    VG.slotPlayer[i] = num_mesa.Next(10);
-                    VG.slotPlayer[i] = VG.slotPlayer[i] == VG.slotBot[i] ? num_mesa.Next(1, 10) : VG.slotPlayer[i]; // compara se os dois numeros são iguais, se sim, é gerado outro numero
+                    VG.slotPlayer[i] = VG.num_mesa.Next(10);
+                    //VG.slotPlayer[i] = VG.slotPlayer[i] == VG.slotBot[i] ? num_mesa.Next(1, 10) : VG.slotPlayer[i]; // compara se os dois numeros são iguais, se sim, é gerado outro numero
                     VG.valoresPlayer[VG.rodada, i] = VG.slotPlayer[i];
 
                     Console.Write($" {VG.valoresPlayer[VG.rodada, i]} ║");
@@ -195,7 +193,6 @@ namespace Jogo2
 
         public static void MaoBot(Bot rival)
         {
-            Random num_mesa = new Random();
 
             Console.WriteLine("╔════════════════════╗");
             Console.WriteLine($"  MÃO DE {rival.Nome}      ");
@@ -206,7 +203,7 @@ namespace Jogo2
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    VG.slotBot[i] = num_mesa.Next(10);
+                    VG.slotBot[i] = VG.num_mesa.Next(10);
                     VG.valoresBot[VG.rodada, i] = VG.slotBot[i];
 
                     Console.Write($" {VG.valoresBot[VG.rodada, i]} ║");
