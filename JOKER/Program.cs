@@ -24,7 +24,7 @@ namespace Jogo2
             public static int[] slotMesa = new int[3];
             public static int[,] valoresMesa = new int[5, 3];
         }
-        
+
         static void Main()
         {
             Jogador jogador = new Jogador(100);
@@ -90,7 +90,7 @@ namespace Jogo2
                     case ConsoleKey.NumPad4:
                     case ConsoleKey.D4:
                         return VG.abrir = 0;
-                        
+
 
                     default:
                         Console.WriteLine("╔════════════════════╗");
@@ -110,7 +110,7 @@ namespace Jogo2
                 while (VG.rodada < 5 && VG.abrir != 0)
                 {
                     Console.Clear();
-                    
+
                     Console.WriteLine("╔════════════════════╗");
                     Console.WriteLine("║       JOKER        ║");
                     Console.WriteLine("╠════════════════════╣");
@@ -136,7 +136,7 @@ namespace Jogo2
             Console.Write("║");
 
             Random num_mesa = new Random();
-            if(VG.pausou == false)
+            if (VG.pausou == false)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -148,7 +148,7 @@ namespace Jogo2
             }
             else
             {
-                for(int i = 0; i < 3; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     Console.Write($" {VG.valoresMesa[VG.rodada, i]} ║");
                 }
@@ -161,7 +161,7 @@ namespace Jogo2
         public static void MaoPlayer()
         {
             Random num_mesa = new Random();
-            
+
             Console.WriteLine("╔════════════════════╗");
             Console.WriteLine("║      SUA MÃO       ║");
             Console.WriteLine("╠════════════════════╣");
@@ -172,8 +172,9 @@ namespace Jogo2
                 for (int i = 0; i < 2; i++)
                 {
                     VG.slotPlayer[i] = num_mesa.Next(10);
+                    VG.slotPlayer[i] = VG.slotPlayer[i] == VG.slotBot[i] ? num_mesa.Next(1, 10) : VG.slotPlayer[i]; // compara se os dois numeros são iguais, se sim, é gerado outro numero
                     VG.valoresPlayer[VG.rodada, i] = VG.slotPlayer[i];
-                    
+
                     Console.Write($" {VG.valoresPlayer[VG.rodada, i]} ║");
                 }
             }
@@ -186,14 +187,14 @@ namespace Jogo2
             }
 
             Console.WriteLine("\n╚════════════════════╝");
-            
+
             VG.rodada++;
         }
 
         public static void MaoBot(Bot rival)
         {
             Random num_mesa = new Random();
-            
+
             string nomeRival = rival.Nome.Length > 8 ? rival.Nome.Substring(0, 8) : rival.Nome;
             Console.WriteLine("╔════════════════════╗");
             Console.WriteLine($"║ {nomeRival,-8}      ║");
@@ -206,7 +207,7 @@ namespace Jogo2
                 {
                     VG.slotBot[i] = num_mesa.Next(10);
                     VG.valoresBot[VG.rodada, i] = VG.slotBot[i];
-                    
+
                     Console.Write($" {VG.valoresBot[VG.rodada, i]} ║");
                 }
             }
@@ -238,7 +239,7 @@ namespace Jogo2
                 while (VG.abrir > 0)
                 {
                     var tecla = Console.ReadKey(true);
-                    
+
                     switch (tecla.Key)
                     {
                         case ConsoleKey.D1:
@@ -248,7 +249,7 @@ namespace Jogo2
                             Console.WriteLine("╚════════════════════╝");
                             jogador.Jogar(jogador);
                             break;
-                            
+
                         case ConsoleKey.D2:
                             Console.WriteLine();
                             Console.WriteLine("╔════════════════════╗");
@@ -256,7 +257,7 @@ namespace Jogo2
                             Console.WriteLine("╚════════════════════╝");
                             Thread.Sleep(200);
                             break;
-                            
+
                         case ConsoleKey.D3:
                             Console.WriteLine();
                             Console.WriteLine("╔════════════════════╗");
@@ -267,7 +268,7 @@ namespace Jogo2
                             VG.pausou = true;
                             Menu();
                             break;
-                            
+
                         default:
                             Console.WriteLine();
                             Console.WriteLine("╔════════════════════╗");
