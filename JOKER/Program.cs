@@ -14,16 +14,31 @@ namespace Jogo2
 
         public static class variaveisGlobais
         {
+            //partida
             public static int rodada { get; set; } = 0;
             public static int abrir { get; set; } = 1;
             public static bool pausou { get; set; } = false;
+            //numeros usuario
             public static int[] slotPlayer = new int[2];
             public static int[,] valoresPlayer = new int[5, 2];
+            //numeros bot
             public static int[] slotBot = new int[2];
             public static int[,] valoresBot = new int[5, 2];
+            //numeros mesa
             public static int[] slotMesa = new int[3];
             public static int[,] valoresMesa = new int[5, 3];
+            //somas
+            public static int somaMesa;
+            public static int somaBot;
+            public static int somaPlayer;
+            //numeros/sorteios da partida
+            public static int joker;
             public static Random num_mesa = new Random();
+            //combinação
+            public static string combinacaoMesa;
+            public static string combinacaoPlayer;
+            public static string combinacaoBot;
+            public static int[] combinacao = new int[2];
         }
 
         static void Main()
@@ -49,6 +64,7 @@ namespace Jogo2
                 rival.Nome = rival.Nome.Length > 8 ? rival.Nome.Substring(0, 8) : rival.Nome;
                 VG.abrir = Menu();
                 Mesa(jogador, rival);
+                
             }
             Console.WriteLine();
             Console.WriteLine("╔════════════════════╗");
@@ -112,6 +128,9 @@ namespace Jogo2
                 VG.rodada = 0;
                 while (VG.rodada < 5 && VG.abrir != 0)
                 {
+                    VG.combinacaoMesa = "";
+                    VG.combinacaoBot = "";
+                    VG.combinacaoPlayer = "";
                     Console.Clear();
 
                     Console.WriteLine("╔════════════════════╗");
@@ -125,7 +144,8 @@ namespace Jogo2
                     MaoBot(rival);
                     MaoPlayer();
                     VG.pausou = false;
-                    AcaoPlayer(jogador);
+                    AcaoPlayer(jogador, rival);
+                    
                     Thread.Sleep(1000);
                 }
             }
@@ -137,16 +157,43 @@ namespace Jogo2
             Console.WriteLine("║       MESA         ║");
             Console.WriteLine("╠════════════════════╣");
             Console.Write("║");
-
             if (VG.pausou == false)
             {
                 for (int i = 0; i < 3; i++)
                 {
                     VG.slotMesa[i] = VG.num_mesa.Next(1, 10);
                     VG.valoresMesa[VG.rodada, i] = VG.slotMesa[i];
+                    // COMPARA SE OS VALORES SÃO IGUAIS E RECEBE ELES
+                    if(i == 1) VG.joker = VG.slotMesa[i] == VG.slotMesa[i-1] ? VG.slotMesa[i] : VG.joker;
+                    if(i == 2) VG.joker = VG.slotMesa[i] == VG.slotMesa[i-1] ? VG.slotMesa[i] : VG.joker;
+                    if(i == 2) VG.joker = VG.slotMesa[i] == VG.slotMesa[i-2] ? VG.slotMesa[i] : VG.joker;
+
+                    //combinação da mesa
+                    if(i == 1) VG.combinacaoMesa = VG.slotMesa[i] == VG.slotMesa[i-1] ? "umpar" : VG.combinacaoMesa;
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[i] == VG.slotMesa[i-1] || VG.slotMesa[i] == VG.slotMesa[i-2] ? "umpar" : VG.combinacaoMesa;
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[i] == VG.slotMesa[i-1] && VG.slotMesa[i] == VG.slotMesa[i-2] ? "trinca" : VG.combinacaoMesa;
+
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[0] == VG.slotMesa[1]+1 && VG.slotMesa[0] == VG.slotMesa[2]+2 ? "sequencia" : VG.combinacaoMesa;
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[0] == VG.slotMesa[1]+2 && VG.slotMesa[0] == VG.slotMesa[2]+1 ? "sequencia" : VG.combinacaoMesa;
+
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[1] == VG.slotMesa[0]+1 && VG.slotMesa[1] == VG.slotMesa[2]+2 ? "sequencia" : VG.combinacaoMesa;
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[1] == VG.slotMesa[0]+2 && VG.slotMesa[1] == VG.slotMesa[2]+1 ? "sequencia" : VG.combinacaoMesa;
+
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[2] == VG.slotMesa[0]+1 && VG.slotMesa[2] == VG.slotMesa[1]+2 ? "sequencia" : VG.combinacaoMesa;
+                    if(i == 2) VG.combinacaoMesa = VG.slotMesa[2] == VG.slotMesa[0]+2 && VG.slotMesa[2] == VG.slotMesa[1]+1 ? "sequencia" : VG.combinacaoMesa;
+
+
+                    // ATRIBUI O VALOR DE CADA NUMERO CONFORME A TABELA DE VALORES
+                    if (VG.slotMesa[i] == 1) VG.somaMesa += 11;
+                    else if(VG.slotMesa[i] == 7 || VG.slotMesa[i] == 9) VG.somaMesa += 10;
+                    else
+                    {
+                        VG.somaMesa += VG.slotMesa[i];
+                    }
 
                     Console.Write($" {VG.valoresMesa[VG.rodada, i]} ║");
                 }
+                Console.WriteLine(VG.combinacaoMesa);
             }
             else
             {
@@ -166,17 +213,79 @@ namespace Jogo2
             Console.WriteLine("║      SUA MÃO       ║");
             Console.WriteLine("╠════════════════════╣");
             Console.Write("║");
-
+             
             if (VG.pausou == false)
             {
                 for (int i = 0; i < 2; i++)
                 {
                     VG.slotPlayer[i] = VG.num_mesa.Next(10);
-                    //VG.slotPlayer[i] = VG.slotPlayer[i] == VG.slotBot[i] ? num_mesa.Next(1, 10) : VG.slotPlayer[i]; // compara se os dois numeros são iguais, se sim, é gerado outro numero
+                    int playerSlot = VG.slotPlayer[i];
+                    // COMPARA SE OS VALORES SÃO IGUAIS E RECEBE ELES
+                    VG.joker = playerSlot == VG.joker ? playerSlot : VG.joker;
                     VG.valoresPlayer[VG.rodada, i] = VG.slotPlayer[i];
+                    if (playerSlot == 0 && VG.joker == 0)
+                    {
+                        Console.WriteLine("\n || Escolha um valor para o JOKER (1 - 9)||");
+                        int escolha = int.Parse(Console.ReadLine());
+                        if(escolha <= 0 || escolha >=10)
+                        {
+                            VG.joker = VG.num_mesa.Next(1, 10);
+                            playerSlot = VG.joker;
+                            Console.WriteLine($"Ixi, escolha errada, JOKER gerado: {VG.joker}");
+                        }
+                        else
+                        {
+                            VG.joker = escolha;
+                            playerSlot = escolha;
+                        }
+                    }
 
-                    Console.Write($" {VG.valoresPlayer[VG.rodada, i]} ║");
+                    switch(playerSlot)
+                    {
+                        case 1:
+                            VG.somaPlayer += 11;
+                            break;
+                        case 2:
+                        case 3: 
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 8:
+                            VG.somaPlayer += playerSlot;
+                            break;
+                        case 9:
+                        case 7:
+                            VG.somaPlayer += 10;
+                            break;
+                        case 0:
+                            VG.somaPlayer += VG.joker;
+                            break;
+                    }
+                    //combinações do player
+                    if(i == 1) VG.combinacaoPlayer = VG.slotPlayer[0] == VG.slotPlayer[1]+1 ? "sequencia" : VG.combinacaoPlayer;
+                    if(i == 1) VG.combinacaoPlayer = VG.slotPlayer[1] == VG.slotPlayer[0]+1 ? "sequencia" : VG.combinacaoPlayer;
+
+                    //AAAAAAAAAAAAAAAAAAAA to ficando maluco já
+                    for(int y=0;y<3;y++)
+                    {
+                        VG.combinacao[i] = VG.slotPlayer[i] == VG.slotMesa[y] ? VG.combinacao[i]++ : VG.combinacao[i];
+                    }
+                    if(i == 1) VG.slotPlayer[1] == VG.slotPlayer[0] ? VG.combinacao++ : VG.combinacao;
+
+                    if(VG.combinacao[i] == 1)
+                    {
+                        VG.combinacaoPlayer = "umpar";
+                    }
+                    if(VG.combinacao[i] == 2)
+                    {
+                        VG.combinacaoPlayer = "trinca";
+                    }
+
+                    string mensagem = VG.valoresPlayer[VG.rodada, i] == 0 ? $"J = {VG.joker} ║" : $"{VG.valoresPlayer[VG.rodada, i]} ║";
+
+                    Console.Write($"{mensagem}");
                 }
+                Console.WriteLine(VG.combinacaoPlayer);
             }
             else
             {
@@ -203,10 +312,31 @@ namespace Jogo2
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    VG.slotBot[i] = VG.num_mesa.Next(10);
+                    VG.slotBot[i] = VG.num_mesa.Next(1, 10);
                     VG.valoresBot[VG.rodada, i] = VG.slotBot[i];
-
+                    int botSlot = VG.slotBot[i];
+                    switch (botSlot)
+                    {
+                        case 1:
+                            VG.somaBot += 11;
+                            break;
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 8:
+                            VG.somaBot += botSlot;
+                            break;
+                        case 9:
+                        case 7:
+                            VG.somaBot += 10;
+                            break;
+                    }
                     Console.Write($" {VG.valoresBot[VG.rodada, i]} ║");
+                    //combinações do bot
+                    if(i == 1) VG.combinacaoBot = VG.slotBot[0] == VG.slotBot[1]+1 ? "sequencia" : VG.combinacaoBot;
+                    if(i == 1) VG.combinacaoBot = VG.slotBot[1] == VG.slotBot[0]+1 ? "sequencia" : VG.combinacaoBot;
                 }
             }
             else
@@ -216,11 +346,22 @@ namespace Jogo2
                     Console.Write($" {VG.valoresBot[VG.rodada, i]} ║");
                 }
             }
-
+            Console.WriteLine(VG.combinacaoBot);
             Console.WriteLine("\n╚════════════════════╝");
         }
 
-        public static void AcaoPlayer(Jogador jogador)
+        public static void calcularMao(Jogador jogador, Bot rival)
+        {
+
+            int totalPlayer = VG.somaMesa + VG.somaPlayer;
+            int totalBot = VG.somaMesa + VG.somaBot;
+
+            Console.WriteLine($"\nPontos da sua mão: {totalPlayer}");
+            Console.WriteLine($"Pontos da mão de {rival.Nome}: {totalBot}");
+            VG.somaMesa = 0; VG.somaPlayer = 0; VG.somaBot = 0; VG.joker = 0;
+        }
+
+        public static void AcaoPlayer(Jogador jogador, Bot rival)
         {
             if (VG.abrir != 0)
             {
@@ -231,6 +372,7 @@ namespace Jogo2
                 Console.WriteLine("║ [2] TROCAR         ║");
                 Console.WriteLine("║ [3] MENU           ║");
                 Console.WriteLine("╚════════════════════╝");
+                calcularMao(jogador, rival);
                 Console.WriteLine();
                 Console.Write("ESCOLHA: ");
 
@@ -295,7 +437,7 @@ namespace Jogo2
             Console.WriteLine("║ 3     │ 03         ║");
             Console.WriteLine("║ 4     │ 04         ║");
             Console.WriteLine("║ 5     │ 05         ║");
-            Console.WriteLine("║ 6     │ 00         ║");
+            Console.WriteLine("║ 6     │ 06         ║");
             Console.WriteLine("║ 7     │ 10         ║");
             Console.WriteLine("║ 8     │ 08         ║");
             Console.WriteLine("║ 9     │ 10         ║");
@@ -319,8 +461,7 @@ namespace Jogo2
             Console.WriteLine("║ TRINCA        │ [SOMA] ^ 3     ║");
             Console.WriteLine("║ SEQUÊNCIA     │ [SOMA] ^ 5     ║");
             Console.WriteLine("║ FULL HOUSE    │ [SOMA] ^ 5 X 3 ║");
-            Console.WriteLine("║ QUADRA        │ MUDE UM NÚMERO ║");
-            Console.WriteLine("║ QUINTUPLA     │ [SOMA] ^ 5 X 5 ║");
+            Console.WriteLine("║ QUADRA        │ [SOMA] ^ 5 X 5 ║");
             Console.WriteLine("║ JACKPOT       │ [SOMA] ^ 10    ║");
             Console.WriteLine("╚═══════════════╧════════════════╝");
             Console.WriteLine();
@@ -338,8 +479,7 @@ namespace Jogo2
                 Console.WriteLine("║ SEQUÊNCIA     │ 7 5 4 6 3 ║");
                 Console.WriteLine("║ FULL HOUSE    │ 7 7 7 3 3 ║");
                 Console.WriteLine("║ QUADRA        │ 7 7 7 7 - ║");
-                Console.WriteLine("║ QUINTUPLA     │ 7 7 7 7 7 ║");
-                Console.WriteLine("║ JACKPOT       │ 7 7 7 6 6 ║");
+                Console.WriteLine("║ JACKPOT       │ 7 7 7 7 7 ║");
                 Console.WriteLine("╚═══════════════╧═══════════╝");
                 Console.WriteLine();
                 Console.Write("Pressione qualquer tecla...");
