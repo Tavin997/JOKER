@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Jogo2
 {
-    internal class Bot : Jogador
+    public class Bot : Jogador
     {
         public Bot(int Fichas) : base(Fichas)
         {

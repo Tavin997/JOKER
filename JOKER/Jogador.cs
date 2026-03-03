@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Jogo2
 {
-    internal class Jogador
+    public class Jogador
     {
         private string _nome;
         private int _fichas;
